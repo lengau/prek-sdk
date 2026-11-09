@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# prek is a standalone binary; no per-project setup needed.
+# Keep the hook so the SDK participates in project setup cleanly.

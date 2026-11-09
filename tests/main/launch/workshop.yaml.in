@@ -1,0 +1,4 @@
+name: test-prek
+base: ${BASE}
+sdks:
+  - name: try-prek

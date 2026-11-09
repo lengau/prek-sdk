@@ -1,0 +1,4 @@
+# sdkcraft build artifacts
+*.sdk
+# spread environment state
+tests/.spread-reuse.yaml

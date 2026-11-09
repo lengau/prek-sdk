@@ -1,0 +1,14 @@
+summary: Launch workshop with prek SDK
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  workshop exec -- prek --version
+
+debug: |
+  workshop tasks

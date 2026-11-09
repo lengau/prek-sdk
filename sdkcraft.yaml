@@ -1,0 +1,22 @@
+name: prek
+version: "0.5.10"
+summary: Fast pre-commit reimplemented as a dependency-free Python linter runner
+description: |
+  This SDK provides the prek tool, a high-performance reimplementation of
+  pre-commit that runs hooks without requiring Python or a virtual
+  environment setup. prek is installed as a standalone binary and placed on
+  the PATH in workshops.
+license: MIT
+platforms:
+  ubuntu@22.04:amd64:
+  ubuntu@24.04:amd64:
+  ubuntu@26.04:amd64:
+
+parts:
+  prek:
+    plugin: dump
+    source: https://github.com/j178/prek/releases/download/v${CRAFT_PROJECT_VERSION}/prek-x86_64-unknown-linux-gnu.tar.gz
+    source-type: tar
+    override-build: |
+      mkdir -p "$CRAFT_PART_INSTALL/bin"
+      install -m755 "$CRAFT_PART_SRC/prek" "$CRAFT_PART_INSTALL/bin/prek"

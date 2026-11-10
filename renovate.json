@@ -18,14 +18,9 @@
       "versioningTemplate": "semver"
     }
   ],
-  "baseBranchPatterns": [
-    "main",
-    "0.5"
-  ],
   "packageRules": [
     {
       "matchPackageNames": ["j178/prek"],
-      "matchBaseBranches": ["main", "0.5"],
       "allowedVersions": "/^0\\./"
     }
   ]

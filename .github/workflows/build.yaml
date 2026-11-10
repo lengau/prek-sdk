@@ -3,11 +3,10 @@ name: Build SDK
 on:
   pull_request:
     branches:
-      # Version branches maintained by Renovate (see renovate.json).
-      - "[0-9]+.[0-9]+"
+      - main
   push:
     branches:
-      - "[0-9]+.[0-9]+"
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}

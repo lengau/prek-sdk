@@ -1,18 +1,13 @@
 # Multi-base SDK: each platform names its base, built with --platform.
-# Branch pattern matches the version branches Renovate maintains (VERSION).
+# Uploads run on push to main; the track defaults to "latest" (branch name).
 
 name: Build and Upload SDK
 
 on:
   push:
     branches:
-      - "[0-9]+.[0-9]+"
+      - main
   workflow_dispatch:
-    inputs:
-      branch:
-        description: "Branch name (e.g., 0.5)"
-        required: true
-        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}

@@ -1,4 +1,5 @@
 name: prek
+title: prek SDK
 version: "0.5.10"
 summary: Fast pre-commit reimplemented as a dependency-free Python linter runner
 description: |
@@ -7,6 +8,10 @@ description: |
   environment setup. prek is installed as a standalone binary and placed on
   the PATH in workshops.
 license: MIT
+contact: https://github.com/lengau/prek-sdk/issues
+issues: https://github.com/lengau/prek-sdk/issues
+source-code: https://github.com/lengau/prek-sdk
+website: https://prek.j178.dev/
 platforms:
   ubuntu@22.04:amd64:
   ubuntu@24.04:amd64:

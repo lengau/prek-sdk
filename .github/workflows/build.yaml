@@ -3,9 +3,11 @@ name: Build SDK
 on:
   pull_request:
     branches:
-      # TODO: set branch pattern matching your version branches
-      # Examples: "[0-9]+" for major-only, "[0-9]+.[0-9]+" for major.minor
-      - \"[0-9]+\"
+      # Version branches maintained by Renovate (see renovate.json).
+      - "[0-9]+.[0-9]+"
+  push:
+    branches:
+      - "[0-9]+.[0-9]+"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}

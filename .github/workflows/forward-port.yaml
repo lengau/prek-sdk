@@ -12,6 +12,9 @@ permissions:
 
 jobs:
   forward-port:
+    # Skip entirely when there are no version branches to forward-port to;
+    # an empty matrix would fail the run with zero jobs.
+    if: ${{ vars.LONG_TERM_BRANCHES != '[]' }}
     uses: canonical/sdkcraft-actions/.github/workflows/forward-port.yml@main
     with:
       long-term-branches: ${{ vars.LONG_TERM_BRANCHES }}

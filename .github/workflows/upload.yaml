@@ -17,6 +17,7 @@ jobs:
   build-and-upload:
     uses: canonical/sdkcraft-actions/.github/workflows/upload.yml@main
     with:
+      runs-on: '["ubuntu-latest"]'
       platforms: '["ubuntu@22.04:amd64", "ubuntu@24.04:amd64", "ubuntu@26.04:amd64", "ubuntu@22.04:arm64", "ubuntu@24.04:arm64", "ubuntu@26.04:arm64", "ubuntu@22.04:riscv64", "ubuntu@24.04:riscv64", "ubuntu@26.04:riscv64"]'
       platform-flag: "--platform"
       track: latest

@@ -11,12 +11,69 @@ platforms:
   ubuntu@22.04:amd64:
   ubuntu@24.04:amd64:
   ubuntu@26.04:amd64:
+  ubuntu@22.04:arm64:
+    build-on: [ubuntu@22.04:amd64, ubuntu@22.04:arm64]
+    build-for: [ubuntu@22.04:arm64]
+  ubuntu@24.04:arm64:
+    build-on: [ubuntu@24.04:amd64, ubuntu@24.04:arm64]
+    build-for: [ubuntu@24.04:arm64]
+  ubuntu@26.04:arm64:
+    build-on: [ubuntu@26.04:amd64, ubuntu@26.04:arm64]
+    build-for: [ubuntu@26.04:arm64]
+  ubuntu@22.04:riscv64:
+    build-on: [ubuntu@22.04:amd64, ubuntu@22.04:arm64, ubuntu@22.04:riscv64]
+    build-for: [ubuntu@22.04:riscv64]
+  ubuntu@24.04:riscv64:
+    build-on: [ubuntu@24.04:amd64, ubuntu@24.04:arm64, ubuntu@24.04:riscv64]
+    build-for: [ubuntu@24.04:riscv64]
+  ubuntu@26.04:riscv64:
+    build-on: [ubuntu@26.04:amd64, ubuntu@26.04:arm64, ubuntu@26.04:riscv64]
+    build-for: [ubuntu@26.04:riscv64]
 
 parts:
   prek:
-    plugin: dump
-    source: https://github.com/j178/prek/releases/download/v${CRAFT_PROJECT_VERSION}/prek-x86_64-unknown-linux-gnu.tar.gz
-    source-type: tar
-    override-build: |
-      mkdir -p "$CRAFT_PART_INSTALL/bin"
-      install -m755 "$CRAFT_PART_SRC/prek" "$CRAFT_PART_INSTALL/bin/prek"
+    plugin: rust
+    source: https://github.com/j178/prek.git
+    source-type: git
+    source-tag: v${CRAFT_PROJECT_VERSION}
+    # Build the `prek` crate directly (not via a virtual workspace install),
+    # so cargo honors CARGO_BUILD_TARGET and installs binaries into $SDK/bin.
+    rust-path:
+      - crates/prek
+    build-packages:
+      - cmake
+      - gcc-aarch64-linux-gnu
+      - g++-aarch64-linux-gnu
+      - binutils-riscv64-linux-gnu
+      - gcc-riscv64-linux-gnu
+      - g++-riscv64-linux-gnu
+    build-environment:
+      # Cargo's target selection at compile/link time inside the generated
+      # step script; expansion happens in-bash so no overrides are needed.
+      - CARGO_BUILD_TARGET: '$(case "$CRAFT_ARCH_BUILD_FOR" in
+        amd64) echo x86_64-unknown-linux-gnu ;;
+        arm64) echo aarch64-unknown-linux-gnu ;;
+        riscv64) echo riscv64gc-unknown-linux-gnu ;; esac)'
+      # aws-lc-sys compiles C for the target; point it at the cross toolchain.
+      - CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: gcc
+      - CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: '$(case "$CRAFT_ARCH_BUILD_ON" in
+        arm64) echo gcc ;; *) echo aarch64-linux-gnu-gcc ;; esac)'
+      - CC_aarch64_unknown_linux_gnu: '$(case "$CRAFT_ARCH_BUILD_ON" in
+        arm64) echo gcc ;; *) echo aarch64-linux-gnu-gcc ;; esac)'
+      - CXX_aarch64_unknown_linux_gnu: '$(case "$CRAFT_ARCH_BUILD_ON" in
+        arm64) echo g++ ;; *) echo aarch64-linux-gnu-g++ ;; esac)'
+      - AR_aarch64_unknown_linux_gnu: '$(case "$CRAFT_ARCH_BUILD_ON" in
+        arm64) echo ar ;; *) echo aarch64-linux-gnu-ar ;; esac)'
+      - CC_riscv64gc_unknown_linux_gnu: riscv64-linux-gnu-gcc
+      - CXX_riscv64gc_unknown_linux_gnu: riscv64-linux-gnu-g++
+      - AR_riscv64gc_unknown_linux_gnu: riscv64-linux-gnu-ar
+      - CARGO_TARGET_RISCV64GC_UNKNOWN_LINUX_GNU_LINKER: '$(case "$CRAFT_ARCH_BUILD_ON" in
+        riscv64) echo gcc ;; *) echo riscv64-linux-gnu-gcc ;; esac)'
+    override-pull: |
+      craftctl default
+      # The rustup-managed toolchain ships only the host's std; add the target's.
+      case "$CRAFT_ARCH_BUILD_FOR" in
+        amd64) rustup target add x86_64-unknown-linux-gnu ;;
+        arm64) rustup target add aarch64-unknown-linux-gnu ;;
+        riscv64) rustup target add riscv64gc-unknown-linux-gnu ;;
+      esac
